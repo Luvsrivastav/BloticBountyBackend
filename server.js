@@ -14,11 +14,11 @@ app.use(cors());
 app.get("/", (req, res) => {
   res.status(200).json("Welcome");
 });
-
+const port = process.env.port || 8080
 app.use("/api", router);
 
 connect().then(()=>{
-  app.listen("8080", () => {
-    console.log("databse conntected listing on localhost port 8080");
+  app.listen(port, () => {
+    console.log(`databse conntected listing on localhost port ${port} `);
   })
 });
