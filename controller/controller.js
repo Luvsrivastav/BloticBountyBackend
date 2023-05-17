@@ -216,7 +216,7 @@ const Signup = async (req, res) => {
       .hash(myPlaintextPassword, saltRounds)
       .then(async function (hash) {
         // Store hash in your password DB
-        userdata = { ...userdata, password: hash ,coins: "0" };
+        userdata = { ...userdata, password: hash ,coins: "100" };
         console.log("userdata from signup  api with hash", userdata);
         //saving user to databse test collection user
         const newuser = await new user(userdata);
