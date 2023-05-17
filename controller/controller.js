@@ -245,7 +245,8 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   console.log(email , password)
   let finresult = {};
-  await user
+  try {
+    await user
     .find({ email })
     .then(async (res1) => {
       // Load hash from your password DB.
@@ -278,6 +279,9 @@ const login = async (req, res) => {
       res.json("Invalid Password or Username");
       console.log("Ivalid password or Username", err);
     });
+  } catch (error) {
+    console.log(error) 
+  }
 };
 
 const verifylogintoken = (req, res, next) => {
