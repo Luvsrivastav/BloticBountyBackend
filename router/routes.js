@@ -6,7 +6,7 @@ import * as controller from "../controller/controller.js";
 const router =  Router();
 // get
 
-router.route("/getapi").get(controller.getapi)
+router.route("/getapi").post(controller.getapi)
 
 // post
 

@@ -5,8 +5,20 @@ import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 dotenv.config();
 
-const getapi = async (req, res) => {
-  res.status(200).json("welcome to pi");
+try {
+  user.collection.createIndex({ username: 1 }, { unique: true });
+  user.collection.createIndex({ email: 1 }, { unique: true });
+
+} catch (error) {
+  console.log(error)
+}
+  
+async function getapi(req, res)  {
+  const {username , email} = req.body
+  
+  const existuser = await user.find({ username: username })
+  res.json(existuser)
+
 };
 
 //use to update profile
@@ -179,7 +191,7 @@ const updatecoin = (req, res) => {
   });
 };
 
-const Signup = async (req, res) => {
+async function Signup(req, res)  {
   let userdata = {};
   let existres = {};
   const { username, email, password } = req.body;
@@ -241,7 +253,7 @@ const Signup = async (req, res) => {
  
 };
 
-const login = async (req, res) => {
+async function login (req, res)  {
   const { email, password } = req.body;
   console.log(email , password)
   let finresult = {};
@@ -277,14 +289,14 @@ const login = async (req, res) => {
     })
     .catch((err) => {
       res.json("Invalid Password or Username");
-      console.log("Ivalid password or Username", err);
+      console.log("Ivalid password or Username new", err);
     });
   } catch (error) {
     console.log(error) 
   }
 };
 
-const verifylogintoken = (req, res, next) => {
+async function verifylogintoken(req, res, next)  {
   const bearerHeader = req.headers["authorization"];
   
   if (typeof bearerHeader !== "undefined") {
@@ -297,7 +309,7 @@ const verifylogintoken = (req, res, next) => {
   }
 };
 
-const testtoken = (req, res) => {
+async function testtoken (req, res)  {
   jwt.verify(req.token, process.env.SECRET_LOGIN, async (err, authdata) => {
     if (err) {
       res.send("invalid token");
