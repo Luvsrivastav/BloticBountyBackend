@@ -5,13 +5,13 @@ import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 dotenv.config();
 
-try {
-  user.collection.createIndex({ username: 1 }, { unique: true });
-  user.collection.createIndex({ email: 1 }, { unique: true });
+// try {
+//   user.collection.createIndex({ username: 1 }, { unique: true });
+//   user.collection.createIndex({ email: 1 }, { unique: true });
 
-} catch (error) {
-  console.log(error)
-}
+// } catch (error) {
+//   console.log(error)
+// }
   
 async function getapi(req, res)  {
   const {username , email} = req.body
