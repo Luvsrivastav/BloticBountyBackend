@@ -17,5 +17,7 @@ router.route("/mlogin").post(controller.mlogin)
 router.route("/updatecoin").post(controller.verifytoken ,controller.updatecoin)
 router.route("/testtoken").post(controller.verifylogintoken ,controller.testtoken)
 router.route("/login").post(controller.login)
+router.route("/Bounty/user").post(controller.updateBountyuser)
+router.route("/createbounty").post(controller.createbounty)
 
 export default router 
