@@ -3,6 +3,9 @@ import { masteruser } from "../model/model.js";
 import jwt, { verify } from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import bountydata from "../model/Bounty.js";
+import { Bountyschema } from "../model/Bounty.js";
+import  mongoose  from "mongoose";
 dotenv.config();
 
 // try {
@@ -12,14 +15,13 @@ dotenv.config();
 // } catch (error) {
 //   console.log(error)
 // }
-  
-async function getapi(req, res)  {
-  const {username , email} = req.body
-  
-  const existuser = await user.find({ username: username })
-  res.json(existuser)
 
-};
+async function getapi(req, res) {
+  const { username, email } = req.body;
+
+  const existuser = await user.find({ username: username });
+  res.json(existuser);
+}
 
 //use to update profile
 const getuser = async (req, res) => {
@@ -104,7 +106,7 @@ const getuser = async (req, res) => {
 //use to get data about user
 const finduser = async (req, res) => {
   const { username } = req.body;
-  console.log(username)
+  console.log(username);
   user
     .find({ username: username })
     .then((data) => {
@@ -191,7 +193,7 @@ const updatecoin = (req, res) => {
   });
 };
 
-async function Signup(req, res)  {
+async function Signup(req, res) {
   let userdata = {};
   let existres = {};
   const { username, email, password } = req.body;
@@ -223,82 +225,106 @@ async function Signup(req, res)  {
   ) {
     try {
       const saltRounds = 10;
-    const myPlaintextPassword = password;
-    await bcrypt
-      .hash(myPlaintextPassword, saltRounds)
-      .then(async function (hash) {
-        // Store hash in your password DB
-        userdata = { ...userdata, password: hash ,coins: "100" };
-        console.log("userdata from signup  api with hash", userdata);
-        //saving user to databse test collection user
-        const newuser = await new user(userdata);
-        // newuser = {...newuser , coins:"0"}
-        console.log("hash : ", newuser);
-        newuser.save().then((res1) => {
-          // console.log("user saved , res :", res1);
-          const exusr = res1._doc.username
-          existres = {...existres , user : exusr}
-          res.json(existres);
+      const myPlaintextPassword = password;
+      await bcrypt
+        .hash(myPlaintextPassword, saltRounds)
+        .then(async function (hash) {
+          // Store hash in your password DB
+          userdata = { ...userdata, password: hash, coins: "100" };
+          console.log("userdata from signup  api with hash", userdata);
+          //saving user to databse test collection user
+          const newuser = await new user(userdata);
+          // newuser = {...newuser , coins:"0"}
+          console.log("hash : ", newuser);
+          newuser.save().then((res1) => {
+            // console.log("user saved , res :", res1);
+            const exusr = res1._doc.username;
+            existres = { ...existres, user: exusr };
+            res.json(existres);
+          });
         });
-      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-  else{
+  } else {
     res.json(existres);
   }
   console.log("userdata from signup api", userdata);
+}
 
- 
-};
-
-async function login (req, res)  {
-  const { email, password } = req.body;
-  console.log(email , password)
-  let finresult = {};
+//update bounty from user
+async function updateBountyuser(req, res) {
   try {
-    await user
-    .find({ email })
-    .then(async (res1) => {
-      // Load hash from your password DB.
-      await bcrypt
-        .compare(password, res1[0].password)
-        .then(async function (result) {
-          // result == true
-          const u = res1[0].username 
-          if (result) {
-            await jwt.sign(
-              { u },
-              process.env.SECRET_LOGIN,
-              { expiresIn: "3600s" },
-              (err, token) => {
-                if (!err) {
-                  
-                  finresult = { res: token.toString() };
-                  console.log(token);
-                  res.json(token);
-                  // res.json(finresult)
-                } else {
-                  console.log(err);
-                }
-              }
-            );
-          }
-        });
-    })
-    .catch((err) => {
-      res.json("Invalid Password or Username");
-      console.log("Ivalid password or Username new", err);
-    });
+    let data = req.body
+    console.log(data)
+  data.submissonCount +=1
+  console.log(data)
+  const query  = {bountyName : data.bountyName}
+  const update ={...data}
+  console.log(data);
+  await bountydata.findOneAndUpdate(query,update,{ upsert: true, new: true })
+  res.json(data)
   } catch (error) {
     console.log(error) 
   }
-};
-
-async function verifylogintoken(req, res, next)  {
-  const bearerHeader = req.headers["authorization"];
   
+}
+
+
+// create new collectionin db with query name id parameter
+async function createbounty(req,res){
+  const {id} = req.query
+  await new mongoose.model(`${id}` , Bountyschema)
+}
+
+async function login(req, res) {
+  const { email, password } = req.body;
+  console.log(email, password);
+  let finresult = {};
+  try {
+    await user
+      .find({ email })
+      .then(async (res1) => {
+        // Load hash from your password DB.
+        await bcrypt
+          .compare(password, res1[0].password)
+          .then(async function (result) {
+            // result == true
+            console.log(result);
+            const u = res1[0].username;
+            if (result) {
+              await jwt.sign(
+                { u },
+                process.env.SECRET_LOGIN,
+                { expiresIn: "3600s" },
+                (err, token) => {
+                  if (!err) {
+                    finresult = { res: token.toString() };
+                    console.log(token);
+                    res.json(token);
+                    // res.json(finresult)
+                  } else {
+                    console.log(err);
+                  }
+                }
+              );
+            } else {
+              res.json("Invalid Password or Email");
+            }
+          });
+      })
+      .catch((err) => {
+        // console.log("Ivalid password or Username new", err);
+        res.json("Invalid Password or Email");
+      });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function verifylogintoken(req, res, next) {
+  const bearerHeader = req.headers["authorization"];
+
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split(" ");
     const token = bearer[1];
@@ -307,17 +333,19 @@ async function verifylogintoken(req, res, next)  {
   } else {
     res.json("Invalid login Token");
   }
-};
+}
 
-async function testtoken (req, res)  {
+async function testtoken(req, res) {
   jwt.verify(req.token, process.env.SECRET_LOGIN, async (err, authdata) => {
     if (err) {
       res.send("invalid token");
     } else {
-      res.json("test api working well")
+      res.json("test api working well");
     }
   });
-};
+}
+
+
 
 export {
   getapi,
@@ -330,4 +358,6 @@ export {
   login,
   verifylogintoken,
   testtoken,
+  updateBountyuser,
+  createbounty
 };
