@@ -36,7 +36,6 @@ const userSchema = new mongoose.Schema({
 })
 
 const masterSchema = new mongoose.Schema({
- 
   username: String,
   password: String,
 })

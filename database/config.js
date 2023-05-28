@@ -5,7 +5,7 @@ dotenv.config()
 // console.log(process.env)
 async function connect() {
     const url = process.env.MONGO_URL
-    // console.log(url)
+    console.log(url)
     mongoose.set('strictQuery', true)
   const db = await mongoose.connect(`${url}`, {
     useNewUrlParser: true,
@@ -17,6 +17,7 @@ async function connect() {
    .catch((err)=>{
     console.log("mongo err : ", err)
    })
+
    return db
 
 }
