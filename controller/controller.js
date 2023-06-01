@@ -322,6 +322,36 @@ async function login(req, res) {
   }
 }
 
+
+async function glogin(req, res) {
+  const { email , username} = req.body;
+  console.log(email , username);
+  let finresult = {};
+  try {
+    
+    if (true) {
+      await jwt.sign(
+        { username },
+        process.env.SECRET_LOGIN,
+        { expiresIn: "3600s" },
+        (err, token) => {
+          if (!err) {
+            finresult = { res: token.toString() };
+            console.log(token);
+            res.json(token);
+            // res.json(finresult)
+          } else {
+            console.log(err);
+          }
+        }
+      );
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 async function verifylogintoken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
 
@@ -346,6 +376,8 @@ async function testtoken(req, res) {
 }
 
 
+//google auth 
+
 
 export {
   getapi,
@@ -359,5 +391,6 @@ export {
   verifylogintoken,
   testtoken,
   updateBountyuser,
-  createbounty
+  createbounty,
+  glogin
 };
