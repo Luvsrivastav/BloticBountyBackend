@@ -2,7 +2,8 @@ import { Router } from "express";
 const router = Router()
 import passport from "passport";
 
-const CLIENT_URL = "http://localhost:3000/";
+// const CLIENT_URL = "http://localhost:3000/";
+const CLIENT_URL = "https://blotic.org/";
 
 router.get("/login/success", (req, res) => {
   // console.log("from login " , req.user )
