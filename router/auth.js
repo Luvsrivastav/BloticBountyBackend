@@ -1,5 +1,5 @@
 import { Router } from "express";
-const router = Router()
+const router = Router();
 import passport from "passport";
 
 // const CLIENT_URL = "http://localhost:3000/";
@@ -13,12 +13,10 @@ router.get("/login/success", (req, res) => {
       success: true,
       message: "successfull",
       user: req.user,
-      cookies: req.cookies
+      cookies: req.cookies,
     });
-    
-  }
-  else{
-    res.send("kbhgbn")
+  } else {
+    res.send("kbhgbn");
   }
 });
 
@@ -30,26 +28,29 @@ router.get("/login/failed", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  req.flash("success" , "GOODBYE" )
-  res.redirect("/")
-  console.log("from /logout auth" , req.session)
-  req.logOut((err)=>{
-    console.log("logging out" , err)
+  req.flash("success", "GOODBYE");
+  res.redirect("/");
+  console.log("from /logout auth", req.session);
+  req.logOut((err) => {
+    console.log("logging out", err);
   });
-//   req.session.destroy(function (err) {
-//     if (!err) {
-//         res.status(200).clearCookie('connect.sid', {path: '/'}).json({status: "Success"});
-//     } else {
-//         // handle error case...
-//     }
+  //   req.session.destroy(function (err) {
+  //     if (!err) {
+  //         res.status(200).clearCookie('connect.sid', {path: '/'}).json({status: "Success"});
+  //     } else {
+  //         // handle error case...
+  //     }
 
-// });
+  // });
 
   // console.log("from /logout auth" , req.session)
   res.redirect(CLIENT_URL);
 });
 
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
 router.get(
   "/google/callback",
@@ -69,7 +70,10 @@ router.get(
   })
 );
 
-router.get("/facebook", passport.authenticate("facebook", { scope: ["profile"] }));
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", { scope: ["profile"] })
+);
 
 router.get(
   "/facebook/callback",
@@ -79,4 +83,4 @@ router.get(
   })
 );
 
-export default router
+export default router;
