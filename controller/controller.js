@@ -1,11 +1,12 @@
 import user from "../model/model.js";
-import { masteruser } from "../model/model.js";
+import users, { masteruser } from "../model/model.js";
 import jwt, { verify } from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import bountydata from "../model/Bounty.js";
 import { Bountyschema } from "../model/Bounty.js";
 import  mongoose  from "mongoose";
+import jwtDecode from "jwt-decode";
 dotenv.config();
 
 // try {
@@ -57,11 +58,10 @@ const getuser = async (req, res) => {
     designation2: data5.designation2,
     timeframe2: data5.timeframe2,
     desc2: data5.desc2,
-    coins: "0",
   };
   await user
     .updateOne(
-      { username: username },
+      { email: username },
       {
         $set: {
           about: newdata.about,
@@ -108,7 +108,7 @@ const finduser = async (req, res) => {
   const { username } = req.body;
   console.log(username);
   user
-    .find({ username: username })
+    .find({ email: username })
     .then((data) => {
       res.json(data[0]);
     })
@@ -300,7 +300,7 @@ async function login(req, res) {
                 (err, token) => {
                   if (!err) {
                     finresult = { res: token.toString() };
-                    console.log(token);
+                    console.log("token",token);
                     res.json(token);
                     // res.json(finresult)
                   } else {
@@ -331,7 +331,7 @@ async function glogin(req, res) {
     
     if (true) {
       await jwt.sign(
-        { username },
+        { username , email },{email},
         process.env.SECRET_LOGIN,
         { expiresIn: "3600s" },
         (err, token) => {
@@ -376,7 +376,21 @@ async function testtoken(req, res) {
 }
 
 
-//google auth 
+async function googlelogin(req, res) {
+  const token = req.body;
+  // console.log(token.data)
+  const decode = jwtDecode(token.data);
+  // console.log(decode)
+  const email = decode.email;
+  const userdata =  {email : decode.email , username : decode.given_name,  coins : "100"} 
+  const query  = {email : decode.email}
+  //check unique username////////////////////////////////////////////////////////////////////
+  const existuser = await users.findOneAndUpdate(query,userdata,{ upsert: true, new: true })
+  console.log(existuser)
+  res.json({existuser})
+} 
+
+
 
 
 export {
@@ -392,5 +406,5 @@ export {
   testtoken,
   updateBountyuser,
   createbounty,
-  glogin
+  googlelogin
 };
