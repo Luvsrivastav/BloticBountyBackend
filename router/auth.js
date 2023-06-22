@@ -1,9 +1,12 @@
- import { Router } from "express";
-const router = Router()
+
+
+import { Router } from "express";
+const router = Router();
 
 import passport from "passport";
 
-const CLIENT_URL = "http://localhost:3000/";
+// const CLIENT_URL = "http://localhost:3000/";
+const CLIENT_URL = "https://blotic.org/";
 
 router.get("/login/success", (req, res) => {
   console.log("from login " , req.user , req.cookies )
@@ -13,12 +16,13 @@ router.get("/login/success", (req, res) => {
       success: true,
       message: "successfull",
       user: req.user,
-      cookies: req.cookies
+      cookies: req.cookies,
     });
     
   }
   else{
     res.send("User not found")
+
   }
 });
 
@@ -31,27 +35,31 @@ router.get("/login/failed", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
+
   // req.flash("success" , "GOODBYE" )
   console.log("from /logout auth" , req.session)
   req.logOut((err)=>{
     console.log("logging out" , err)
-  });
-//   req.session.destroy(function (err) {
-//     if (!err) {
-//         res.status(200).clearCookie('connect.sid', {path: '/'}).json({status: "Success"});
-//     } else {
-//         // handle error case...
-//     }
 
-// });
+  });
+  //   req.session.destroy(function (err) {
+  //     if (!err) {
+  //         res.status(200).clearCookie('connect.sid', {path: '/'}).json({status: "Success"});
+  //     } else {
+  //         // handle error case...
+  //     }
+
+  // });
 
   // console.log("from /logout auth" , req.session)
   res.redirect(CLIENT_URL);
 });
 
+
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }),()=>{
   console.log("/googled called")
 });
+
 
 
 router.get(
@@ -64,4 +72,5 @@ router.get(
 
 
 
-export default router
+
+export default router;
