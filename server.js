@@ -18,11 +18,7 @@ app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(express.json());
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true,
-}));
+
 
 app.use(morgan("tiny"))
 app.use(cookieSession({
@@ -30,12 +26,16 @@ app.use(cookieSession({
   keys: ["bloticrichSecret"], // Secret keys used for encryption and signing
   maxAge: 24 * 60 * 60 * 1000, // Session duration in milliseconds
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
 
-
-
+app.use(cors({
+  origin: "http://localhost:3000",
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true
+}));
 
 app.get("/", (req, res) => {
   res.status(200).json("Welcome");

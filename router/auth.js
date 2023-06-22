@@ -1,11 +1,12 @@
-import { Router } from "express";
+ import { Router } from "express";
 const router = Router()
+
 import passport from "passport";
 
 const CLIENT_URL = "http://localhost:3000/";
 
 router.get("/login/success", (req, res) => {
-  // console.log("from login " , req.user )
+  console.log("from login " , req.user , req.cookies )
   if (req.user) {
     // console.log("from login " , req.user )
     res.status(200).json({
@@ -17,7 +18,7 @@ router.get("/login/success", (req, res) => {
     
   }
   else{
-    res.send("kbhgbn")
+    res.send("User not found")
   }
 });
 
@@ -26,11 +27,11 @@ router.get("/login/failed", (req, res) => {
     success: false,
     message: "failure",
   });
+  res.redirect("/Login")
 });
 
 router.get("/logout", (req, res) => {
-  req.flash("success" , "GOODBYE" )
-  res.redirect("/")
+  // req.flash("success" , "GOODBYE" )
   console.log("from /logout auth" , req.session)
   req.logOut((err)=>{
     console.log("logging out" , err)
@@ -48,7 +49,10 @@ router.get("/logout", (req, res) => {
   res.redirect(CLIENT_URL);
 });
 
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }),()=>{
+  console.log("/googled called")
+});
+
 
 router.get(
   "/google/callback",
@@ -58,24 +62,6 @@ router.get(
   })
 );
 
-router.get("/github", passport.authenticate("github", { scope: ["profile"] }));
 
-router.get(
-  "/github/callback",
-  passport.authenticate("github", {
-    successRedirect: CLIENT_URL,
-    failureRedirect: "/login/failed",
-  })
-);
-
-router.get("/facebook", passport.authenticate("facebook", { scope: ["profile"] }));
-
-router.get(
-  "/facebook/callback",
-  passport.authenticate("facebook", {
-    successRedirect: CLIENT_URL,
-    failureRedirect: "/login/failed",
-  })
-);
 
 export default router
